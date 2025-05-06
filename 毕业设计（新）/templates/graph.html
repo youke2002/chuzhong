@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-color: #2196F3;
+        --secondary-color: #64B5F6;
+        --background-color: #f5f5f5;
+        --text-color: #212121;
+        --card-bg: #ffffff;
+        --border-radius: 12px;
+        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        background-color: var(--background-color);
+        font-family: 'Inter', sans-serif;
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .graph-container {
+        width: 95%;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        display: flex;
+        flex-direction: column;
+        min-height: 80vh;
+    }
+
+    .content-wrapper {
+        display: flex;
+        flex: 1;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .content-wrapper {
+            flex-direction: column;
+        }
+    }
+
+    .control-panel {
+        flex: 1;
+        padding: 20px;
+        background-color: rgba(245, 245, 245, 0.3);
+        border-radius: var(--border-radius);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .graph-display {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background-color: rgba(245, 245, 245, 0.3);
+        border-radius: var(--border-radius);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    select, input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .function-image {
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+        background-color: white;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .function-info {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+        .graph-image {
+            max-width: 100%;
+            max-height: 50vh;  /* 限制最大高度为视口高度的50% */
+            width: auto;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            padding: 10px;
+        }
+    </style>
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="graph-container">
+    {% if error %}
+        <div class="error-message">{{ error }}</div>
+    {% endif %}
+    
+    <div class="content-wrapper">
+        <div class="control-panel">
+            <form method="post">
+                <div class="form-group">
+                    <label for="function_type">函数类型:</label>
+                    <select id="function_type" name="function_type">
+                        <option value="linear" {% if function_type == 'linear' %}selected{% endif %}>一次函数</option>
+                        <option value="quadratic" {% if function_type == 'quadratic' %}selected{% endif %}>二次函数</option>
+                        <option value="inverse" {% if function_type == 'inverse' %}selected{% endif %}>反比例函数</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="a">参数 a:</label>
+                    <input type="number" id="a" name="a" value="{{ a }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="b">参数 b:</label>
+                    <input type="number" id="b" name="b" value="{{ b }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="c">参数 c:</label>
+                    <input type="number" id="c" name="c" value="{{ c }}">
+                </div>
+                
+                <input type="submit" value="生成图像">
+            </form>
+            
+            {% if function_info %}
+                <div class="function-info">
+                    <h3>函数信息</h3>
+                    {% if function_type == 'linear' %}
+                        <p>X 轴截距: {{ function_info.x_intercept if function_info.x_intercept is not none else '无' }}</p>
+                        <p>Y 轴截距: {{ function_info.y_intercept }}</p>
+                    {% elif function_type == 'quadratic' %}
+                        <p>X 轴截距: {{ function_info.x_intercepts if function_info.x_intercepts else '无' }}</p>
+                        <p>Y 轴截距: {{ function_info.y_intercept }}</p>
+                        <p>对称轴: x = {{ function_info.symmetry_axis }}</p>
+                    {% elif function_type == 'inverse' %}
+                        <p>X 轴截距: {{ function_info.x_intercept if function_info.x_intercept is not none else '无' }}</p>
+                        <p>Y 轴截距: 无</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="graph-display">
+            {% if plot_url %}
+                <img class="function-image" src="data:image/png;base64,{{ plot_url }}" alt="函数图像">
+            {% else %}
+                <div class="placeholder">
+                    <p>请设置函数参数并点击"生成图像"按钮</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

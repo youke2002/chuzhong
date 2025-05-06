@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}学习材料下载{% endblock %}
+
+{% block content %}
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* 容器样式 */
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 标题样式 */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        /* 提示消息样式 */
+        .flash-message {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* 资料列表样式 */
+        .material-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .material-list li {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .material-list li:hover {
+            background-color: #e9ecef;
+        }
+
+        .material-list li a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .material-list li a:hover {
+            color: #0056b3;
+        }
+    </style>
+
+    <div class="container">
+        <h1>学习材料下载</h1>
+        <!-- 显示 flash 消息 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- 资料列表 -->
+        <ul class="material-list">
+            {% for material in materials %}
+            <li>
+                <span>{{ material }}</span>
+                <a href="{{ url_for('download_material', filename=material) }}">下载</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
