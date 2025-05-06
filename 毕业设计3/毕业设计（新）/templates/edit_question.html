@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑练习题</title>
+    <style>
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --background-color: #f4f4f9;
+            --card-bg-color: #fff;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .edit-container {
+            background-color: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        input[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.15s ease-in-out;
+            display: block;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <h1>编辑练习题</h1>
+        <form method="post" action="{{ url_for('save_question', question_id=question.id) }}">
+            <label for="type">题目类型:</label>
+            <select id="type" name="type" required>
+                <option value="一次函数" {% if question.type == '一次函数' %}selected{% endif %}>一次函数</option>
+                <option value="二次函数" {% if question.type == '二次函数' %}selected{% endif %}>二次函数</option>
+                <option value="反比例函数" {% if question.type == '反比例函数' %}selected{% endif %}>反比例函数</option>
+            </select>
+            <label for="question">题目内容:</label>
+            <textarea id="question" name="question" rows="5" required>{{ question.question }}</textarea>
+            <label>选项:</label>
+            <label for="option_A">A:</label>
+            <input type="text" id="option_A" name="option_A" value="{{ question.options.split(',')[0] }}" required onchange="updateAnswer()">
+            <label for="option_B">B:</label>
+            <input type="text" id="option_B" name="option_B" value="{{ question.options.split(',')[1] }}" required onchange="updateAnswer()">
+            <label for="option_C">C:</label>
+            <input type="text" id="option_C" name="option_C" value="{{ question.options.split(',')[2] }}" required onchange="updateAnswer()">
+            <label for="option_D">D:</label>
+            <input type="text" id="option_D" name="option_D" value="{{ question.options.split(',')[3] }}" required onchange="updateAnswer()">
+            <label>正确答案:</label>
+            <select id="correct_answer_select" name="answer" required>
+                <option value="" disabled>请选择正确答案</option>
+                <option value="{{ question.options.split(',')[0] }}" data-index="A" {% if question.answer == question.options.split(',')[0] %}selected{% endif %}>选项 A: {{ question.options.split(',')[0] }}</option>
+                <option value="{{ question.options.split(',')[1] }}" data-index="B" {% if question.answer == question.options.split(',')[1] %}selected{% endif %}>选项 B: {{ question.options.split(',')[1] }}</option>
+                <option value="{{ question.options.split(',')[2] }}" data-index="C" {% if question.answer == question.options.split(',')[2] %}selected{% endif %}>选项 C: {{ question.options.split(',')[2] }}</option>
+                <option value="{{ question.options.split(',')[3] }}" data-index="D" {% if question.answer == question.options.split(',')[3] %}selected{% endif %}>选项 D: {{ question.options.split(',')[3] }}</option>
+            </select>
+            
+            <script>
+                function updateAnswer() {
+                    const options = {
+                        A: document.getElementById('option_A').value,
+                        B: document.getElementById('option_B').value,
+                        C: document.getElementById('option_C').value,
+                        D: document.getElementById('option_D').value
+                    };
+                    const select = document.getElementById('correct_answer_select');
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].dataset.index) {
+                            select.options[i].value = options[select.options[i].dataset.index];
+                            select.options[i].text = `选项 ${select.options[i].dataset.index}: ${options[select.options[i].dataset.index]}`;
+                        }
+                    }
+                }
+            </script>
+            <label for="explanation">解析:</label>
+            <textarea id="explanation" name="explanation" rows="5" required>{{ question.explanation }}</textarea>
+            <input type="submit" value="保存修改">
+        </form>
+    </div>
+</body>
+</html>

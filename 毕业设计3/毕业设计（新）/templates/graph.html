@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block title %}函数图像生成{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #2f3640;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-width: 300px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #353b48;
+        }
+
+        select,
+        input[type="number"] {
+            padding: 0.8rem;
+            border: 1px solid #dcdde1;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #00a8ff;
+        }
+
+        input[type="submit"] {
+            padding: 0.8rem;
+            background-color: #00a8ff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0097e6;
+        }
+
+        .error-message {
+            color: #e84118;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .image-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <div class="container">
+        <h1>函数图像生成</h1>
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
+        <div class="main-content">
+            <form class="form-container" method="post">
+                <div class="form-group">
+                    <label for="function_type">函数类型:</label>
+                    <select id="function_type" name="function_type">
+                        <option value="linear" {% if function_type == 'linear' %}selected{% endif %}>一次函数</option>
+                        <option value="quadratic" {% if function_type == 'quadratic' %}selected{% endif %}>二次函数</option>
+                        <option value="inverse" {% if function_type == 'inverse' %}selected{% endif %}>反比例函数</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="a">参数 a:</label>
+                    <input type="number" id="a" name="a" value="{{ a|default(1, true) }}" step="any">
+                </div>
+                <div class="form-group">
+                    <label for="b">参数 b:</label>
+                    <input type="number" id="b" name="b" value="{{ b|default(0, true) }}" step="any">
+                </div>
+                <div class="form-group">
+                    <label for="c">参数 c:</label>
+                    <input type="number" id="c" name="c" value="{{ c|default(0, true) }}" step="any">
+                </div>
+                <input type="submit" value="生成图像">
+            </form>
+            {% if plot_url %}
+                <div class="image-container">
+                    <img src="data:image/png;base64,{{ plot_url }}" alt="函数图像">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+<footer>
+    <p>&copy; 2025 初中数学函数自学网站. 保留所有权利。</p>
+</footer>

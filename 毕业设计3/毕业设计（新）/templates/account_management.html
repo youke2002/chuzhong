@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}账户管理{% endblock %}
+
+{% block content %}
+    <div class="account-management-wrapper">
+        <div class="account-management-card">
+            <h1 class="page-title">账户管理</h1>
+            <p class="sub-title">您可以在此管理您的账户信息</p>
+            <div class="button-group">
+                <form method="post" class="action-form">
+                    <input type="submit" name="delete_account" value="注销账户" class="btn btn-danger" onclick="return confirm('确定要注销您的账户吗？此操作不可撤销。');">
+                    <input type="submit" name="logout" value="退出登录" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

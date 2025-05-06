@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}互动式练习{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: #666;
+            margin-top: 20px;
+        }
+
+        form, .result {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .correct {
+            color: #28a745;
+        }
+
+        .incorrect {
+            color: #dc3545;
+        }
+    </style>
+    <h1>互动式练习</h1>
+    <form method="post">
+        {% for question in questions %}
+            <div>
+                <h3>{{ question.type }} - {{ question.question }}</h3>
+                {% set loop_index = loop.index0 %}
+                {% for option in question.options %}
+                    <label>
+                        <input type="radio" name="answer_{{ loop_index }}" value="{{ option }}" 
+                               {% if user_answers.get('answer_' ~ loop_index) == option %}checked{% endif %}> {{ option }}
+                    </label>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <input type="submit" value="提交答案">
+    </form>
+
+    {% if results %}
+        <h2>答题结果</h2>
+        {% for result in results %}
+            <div class="result">
+                <p>{{ result.question }}</p>
+                <p>你的答案: {{ result.user_answer or '未作答' }}</p>
+                <p>正确答案: {{ result.correct_answer }}</p>
+                <p>解析: {{ result.explanation }}</p>
+                {% if result.is_correct %}
+                    <p class="correct">回答正确！</p>
+                {% else %}
+                    <p class="incorrect">回答错误。</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
